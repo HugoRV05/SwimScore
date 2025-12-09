@@ -30,6 +30,11 @@ export function parseSwimmingResults(text: string): ParsedEvent[] {
     
     // Parse event details
     const eventInfo = parseEventDetails(eventDescription, genderPart);
+
+    // Parse Qualifying Times from the FULL section text
+    // The eventDescription is truncated at "Clasificación", but QTs might be in that truncated part 
+    // or right before it. Passing the full section ensures we see everything.
+    const qualifyingTimes = parseQualifyingTimes(section);
     
     // Find classification section
     const classificationMatch = section.match(/Clasificación\s*(AN)?\s*([\s\S]+?)(?=Prueba\s+\d+|$)/i);
@@ -47,6 +52,7 @@ export function parseSwimmingResults(text: string): ParsedEvent[] {
         eventNumber,
         eventName: `Prueba ${eventNumber} - ${eventInfo.distance}m ${eventInfo.stroke}`,
         ...eventInfo,
+        qualifyingTimes,
         entries,
       });
     }
@@ -119,8 +125,55 @@ function parseEventDetails(text: string, genderPart: string): {
       gender = 'female';
     }
   }
-  
+
   return { distance, stroke, gender, category, isRelay };
+}
+
+function parseQualifyingTimes(text: string): { open?: number; byAge?: Record<number, number> } {
+  const result: { open?: number; byAge?: Record<number, number> } = {};
+  
+  // Open Time: "Absoluto Open: 4:20.67"
+  const openMatch = text.match(/Absoluto Open:\s*([\d:.]+)/i);
+  if (openMatch) {
+    result.open = parseTimeToSeconds(openMatch[1]);
+  }
+
+  // Age Times: "14 AÑOS 13: 5:04.21" or "14 AÑOS: 5:04.21"
+  // The age is the number BEFORE "AÑOS". There might be an internal code (like "13") between AÑOS and the time.
+  // Regex explanation:
+  // (\d+)              -> Capture Age (Group 1)
+  // \s*(?:AÑOS|AÑO)    -> " AÑOS" or " AÑO"
+  // (?:\s+\d+)?        -> Optional internal code (e.g. " 13")
+  // :\s*               -> Colon and whitespace
+  // ([\d:.]+)          -> Capture Time (Group 2)
+  const ageMatches = [...text.matchAll(/(\d+)\s*(?:AÑOS|AÑO)(?:\s+\d+)?:\s*([\d:.]+)/gi)];
+  
+  if (ageMatches.length > 0) {
+    result.byAge = {};
+    for (const match of ageMatches) {
+      const age = parseInt(match[1]);
+      const timeStr = match[2];
+      const seconds = parseTimeToSeconds(timeStr);
+      if (seconds > 0) {
+        result.byAge[age] = seconds;
+      }
+    }
+  }
+
+  return result;
+}
+
+function parseTimeToSeconds(timeStr: string): number {
+  // Handle "mm:ss.cc" or "ss.cc"
+  const parts = timeStr.trim().split(':');
+  if (parts.length === 2) {
+    const min = parseInt(parts[0]);
+    const sec = parseFloat(parts[1]);
+    return min * 60 + sec;
+  } else if (parts.length === 1) {
+    return parseFloat(parts[0]);
+  }
+  return 0;
 }
 
 function parseRelayEntries(text: string): ParsedEntry[] {
@@ -244,8 +297,8 @@ function parseIndividualEntries(text: string): ParsedEntry[] {
       const posMatches = [...beforeTime.matchAll(/(?:^|\s)(\d{1,3})\s+([A-ZÁÉÍÓÚÜÑ])/g)];
       if (posMatches.length === 0) continue;
       
-      const lastPosMatch = posMatches[posMatches.length - 1];
-      const position = parseInt(lastPosMatch[1]);
+      const lastPosMatch = posMatches[posMatches.length - 1]!;
+
       
       const posIndex = beforeTime.lastIndexOf(lastPosMatch[0]);
       const entryText = beforeTime.substring(posIndex).trim();

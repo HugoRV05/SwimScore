@@ -20,6 +20,10 @@ export interface Event {
   relaySize?: number; // 4 for 4x50, 4x100, etc.
   results: Result[];
   records?: EventRecords;
+  qualifyingTimes?: {
+    open?: number; // Time in seconds
+    byAge?: Record<number, number>; // Age -> Time in seconds
+  };
 }
 
 export interface EventRecords {
@@ -45,7 +49,10 @@ export interface Result {
   scoringEligible: boolean; // Whether this result counts for scoring
   openEligible: boolean; // Eligible for open scoring
   categoryEligible: boolean; // Eligible for category scoring
+
   disqualified: boolean;
+  openStatusReason?: 'ok' | 'time_limit' | 'club_limit' | 'dq';
+  categoryStatusReason?: 'ok' | 'time_limit' | 'club_limit' | 'dq';
   courseType: 'S' | 'L'; // Short (25m) or Long (50m) course
 }
 
@@ -168,6 +175,10 @@ export interface ParsedEvent {
   gender: string;
   category: string;
   isRelay: boolean;
+  qualifyingTimes?: {
+    open?: number; // Time in seconds
+    byAge?: Record<number, number>;
+  };
   entries: ParsedEntry[];
 }
 

@@ -3,9 +3,11 @@ import { useAppStore } from '../lib/store';
 import { Link } from 'react-router-dom';
 import { Search, ChevronDown, ChevronUp, Users } from 'lucide-react';
 import Select from '../components/ui/Select';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function SwimmerRankings() {
   const { meet, swimmerStandings } = useAppStore();
+  const { t } = useLanguage();
   const [sortBy, setSortBy] = useState<'totalPoints' | 'openPoints' | 'categoryPoints' | 'medals' | 'events' | 'avgPos'>('totalPoints');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState('');
@@ -111,18 +113,18 @@ export default function SwimmerRankings() {
     return (
       <div>
         <header className="page-header">
-          <h1 className="page-title">Swimmer Rankings</h1>
-          <p className="page-subtitle">View individual swimmer standings</p>
+          <h1 className="page-title">{t('swimmerRankings.title')}</h1>
+          <p className="page-subtitle">{t('swimmerRankings.subtitle')}</p>
         </header>
         
         <div className="empty-state">
           <div className="empty-state-icon">
             <Users strokeWidth={1.5} />
           </div>
-          <h3>No Meet Loaded</h3>
-          <p>Upload a PDF file to view swimmer rankings and individual performances.</p>
+          <h3>{t('swimmerRankings.empty.title')}</h3>
+          <p>{t('swimmerRankings.empty.message')}</p>
           <Link to="/upload" className="btn btn-primary">
-            Upload PDF
+            {t('common.uploadPdf')}
           </Link>
         </div>
       </div>
@@ -132,21 +134,21 @@ export default function SwimmerRankings() {
   return (
     <div>
       <header className="page-header">
-        <h1 className="page-title">Swimmer Rankings</h1>
+        <h1 className="page-title">{t('swimmerRankings.title')}</h1>
         <p className="page-subtitle">
-          {meet.name} • {swimmerStandings.length} swimmers
+          {meet.name} • {swimmerStandings.length} {t('common.swimmer').toLowerCase()}s
         </p>
       </header>
       
       {/* Filters */}
       <div className="filters">
         <div className="filter-group" style={{ flex: 1, maxWidth: '280px' }}>
-          <label>Search Swimmers</label>
+          <label>{t('swimmerRankings.filters.search')}</label>
           <div style={{ position: 'relative' }}>
             <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
             <input
               type="text"
-              placeholder="Search by name..."
+              placeholder={t('swimmerRankings.filters.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{ paddingLeft: '36px' }}
@@ -155,38 +157,38 @@ export default function SwimmerRankings() {
         </div>
         
         <div className="filter-group" style={{ width: '200px' }}>
-          <label>Club</label>
+          <label>{t('swimmerRankings.filters.club')}</label>
           <Select 
             value={clubFilter}
             onChange={setClubFilter}
             options={[
-              { value: '', label: 'All Clubs' },
+              { value: '', label: t('swimmerRankings.filters.allClubs') },
               ...clubs.map(club => ({ value: club, label: club }))
             ]}
           />
         </div>
 
         <div className="filter-group" style={{ width: '180px' }}>
-          <label>Category</label>
+          <label>{t('clubRankings.filters.category')}</label>
           <Select 
             value={categoryFilter}
             onChange={setCategoryFilter}
             options={[
-              { value: '', label: 'All Categories' },
+              { value: '', label: t('common.allCategories') },
               ...categories.map(cat => ({ value: (cat as string), label: (cat as string).toUpperCase() }))
             ]}
           />
         </div>
 
         <div className="filter-group" style={{ width: '200px' }}>
-          <label>Points View</label>
+          <label>{t('swimmerRankings.filters.pointsView')}</label>
           <Select 
             value={pointsView}
             onChange={(val) => setPointsView(val as 'total' | 'open' | 'category')}
             options={[
-              { value: 'total', label: 'Total Points' },
-              { value: 'open', label: 'Open Points Only' },
-              { value: 'category', label: 'Category Points Only' }
+              { value: 'total', label: t('clubRankings.table.total') },
+              { value: 'open', label: t('swimmerRankings.table.openPts') },
+              { value: 'category', label: t('swimmerRankings.table.catPts') }
             ]}
           />
         </div>
@@ -198,17 +200,17 @@ export default function SwimmerRankings() {
           <table>
             <thead>
               <tr>
-                <th>Pos</th>
-                <th>Swimmer</th>
-                <th>Club</th>
-                <th>Year</th>
-                <th>Cat</th>
+                <th>{t('common.pos')}</th>
+                <th>{t('common.swimmer')}</th>
+                <th>{t('common.club')}</th>
+                <th>{t('swimmerRankings.table.year')}</th>
+                <th>{t('swimmerRankings.table.cat')}</th>
                 <th 
                   onClick={() => handleSort('events')} 
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Evts <SortIcon column="events" />
+                    {t('swimmerRankings.table.evts')} <SortIcon column="events" />
                   </span>
                 </th>
                 <th 
@@ -216,7 +218,7 @@ export default function SwimmerRankings() {
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    AvgPos <SortIcon column="avgPos" />
+                    {t('swimmerRankings.table.avgPos')} <SortIcon column="avgPos" />
                   </span>
                 </th>
                 <th 
@@ -224,7 +226,7 @@ export default function SwimmerRankings() {
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {pointsView === 'open' ? 'Open Pts' : pointsView === 'category' ? 'Cat Pts' : 'Points'} <SortIcon column="totalPoints" />
+                    {pointsView === 'open' ? t('swimmerRankings.table.openPts') : pointsView === 'category' ? t('swimmerRankings.table.catPts') : t('swimmerRankings.table.totalPts')} <SortIcon column="totalPoints" />
                   </span>
                 </th>
                 <th 
@@ -232,7 +234,7 @@ export default function SwimmerRankings() {
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Medals <SortIcon column="medals" />
+                    {t('common.medals')} <SortIcon column="medals" />
                   </span>
                 </th>
               </tr>
@@ -300,13 +302,13 @@ export default function SwimmerRankings() {
         <div className="stat-card">
           <div className="stat-content">
             <h3>{sortedStandings.length}</h3>
-            <p>Total Swimmers</p>
+            <p>{t('swimmerRankings.stats.totalSwimmers')}</p>
           </div>
         </div>
         <div className="stat-card">
           <div className="stat-content">
             <h3>{sortedStandings.filter(s => s.goldMedals > 0).length}</h3>
-            <p>Gold Medal Winners</p>
+            <p>{t('swimmerRankings.stats.goldWinners')}</p>
           </div>
         </div>
         <div className="stat-card">
@@ -317,7 +319,7 @@ export default function SwimmerRankings() {
                 : '0'
               }
             </h3>
-            <p>Avg Events per Swimmer</p>
+            <p>{t('swimmerRankings.stats.avgEvents')}</p>
           </div>
         </div>
       </div>

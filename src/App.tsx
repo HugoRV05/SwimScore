@@ -22,6 +22,8 @@ import './index.css';
 
 import { useLocation } from 'react-router-dom';
 
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
+
 function AnimatedMain() {
   const location = useLocation();
   
@@ -42,11 +44,13 @@ function AnimatedMain() {
   );
 }
 
-function App() {
+function AppContent() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('theme');
     return (saved as 'dark' | 'light') || 'dark';
   });
+
+  const { t } = useLanguage();
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -62,39 +66,54 @@ function App() {
       <div className="app-container">
         <aside className="sidebar">
           <div className="sidebar-logo">
-            <Waves size={32} />
-            <h1>Swimming Scorer</h1>
+            <Waves size={32} style={{ color: 'var(--color-accent)' }} />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h1 style={{ fontSize: '1.25rem', margin: 0 }}>SwimScore</h1>
+                <span style={{ 
+                  fontSize: '0.625rem', 
+                  background: 'var(--color-accent)', 
+                  color: 'white', 
+                  padding: '1px 6px', 
+                  borderRadius: '12px', 
+                  fontWeight: '700',
+                  letterSpacing: '0.5px',
+                  textTransform: 'uppercase'
+                }}>PRO</span>
+              </div>
+              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', fontWeight: 400 }}>Professional Meet Analytics</span>
+            </div>
           </div>
           
           <nav className="sidebar-nav">
             <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <LayoutDashboard />
-              <span>Dashboard</span>
+              <span>{t('nav.dashboard')}</span>
             </NavLink>
             
             <NavLink to="/upload" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Upload />
-              <span>Upload PDF</span>
+              <span>{t('nav.upload')}</span>
             </NavLink>
             
             <NavLink to="/clubs" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Trophy />
-              <span>Club Rankings</span>
+              <span>{t('nav.clubs')}</span>
             </NavLink>
             
             <NavLink to="/swimmers" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Users />
-              <span>Swimmers</span>
+              <span>{t('nav.swimmers')}</span>
             </NavLink>
             
             <NavLink to="/events" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Calendar />
-              <span>Events</span>
+              <span>{t('nav.events')}</span>
             </NavLink>
             
             <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Settings />
-              <span>Settings</span>
+              <span>{t('nav.settings')}</span>
             </NavLink>
           </nav>
 
@@ -102,11 +121,31 @@ function App() {
             {theme === 'dark' ? <Sun /> : <Moon />}
             <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
           </div>
+          
+          <div style={{ 
+            marginTop: 'var(--space-4)', 
+            paddingTop: 'var(--space-4)', 
+            borderTop: '1px solid var(--glass-border)',
+            textAlign: 'center'
+          }}>
+            <p style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)', margin: 0 }}>
+              SwimScore v1.0<br/>
+              <span style={{ fontSize: '0.65rem', opacity: 0.7 }}>Professionally Crafted</span>
+            </p>
+          </div>
         </aside>
         
         <AnimatedMain />
       </div>
     </BrowserRouter>
+  );
+}
+
+function App() {
+  return (
+    <LanguageProvider>
+      <AppContent />
+    </LanguageProvider>
   );
 }
 

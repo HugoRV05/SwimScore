@@ -2,10 +2,12 @@ import { useCallback, useState } from 'react';
 import { useAppStore } from '../lib/store';
 import { useNavigate } from 'react-router-dom';
 import { Upload, FileText, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function UploadPage() {
   const { loadPDF, isLoading, parseError, meet, rawText } = useAppStore();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [dragOver, setDragOver] = useState(false);
   const [showRawText, setShowRawText] = useState(false);
   
@@ -38,8 +40,8 @@ export default function UploadPage() {
   return (
     <div>
       <header className="page-header">
-        <h1 className="page-title">Upload Results PDF</h1>
-        <p className="page-subtitle">Upload a Splash Meet Manager PDF to analyze competition results</p>
+        <h1 className="page-title">{t('upload.title')}</h1>
+        <p className="page-subtitle">{t('upload.subtitle')}</p>
       </header>
       
       {/* Upload Zone */}
@@ -61,14 +63,14 @@ export default function UploadPage() {
         {isLoading ? (
           <>
             <Loader size={64} className="spinner" style={{ animation: 'spin 1s linear infinite' }} />
-            <h3>Processing PDF...</h3>
-            <p>Extracting text and parsing results</p>
+            <h3>{t('upload.dropZone.processing')}</h3>
+            <p>{t('upload.dropZone.extracting')}</p>
           </>
         ) : (
           <>
             <Upload size={64} strokeWidth={1} />
-            <h3>Drag & Drop PDF Here</h3>
-            <p>or click to browse files</p>
+            <h3>{t('upload.dropZone.dragDrop')}</h3>
+            <p>{t('upload.dropZone.browse')}</p>
           </>
         )}
       </div>
@@ -79,7 +81,7 @@ export default function UploadPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', color: 'var(--color-error)' }}>
             <AlertCircle />
             <div>
-              <h4>Error Parsing PDF</h4>
+              <h4>{t('upload.error')}</h4>
               <p style={{ color: 'var(--color-text-secondary)', marginTop: 'var(--space-1)' }}>{parseError}</p>
             </div>
           </div>
@@ -92,13 +94,13 @@ export default function UploadPage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', color: 'var(--color-success)' }}>
             <CheckCircle />
             <div style={{ flex: 1 }}>
-              <h4>PDF Loaded Successfully!</h4>
+              <h4>{t('upload.success.title')}</h4>
               <p style={{ color: 'var(--color-text-secondary)', marginTop: 'var(--space-1)' }}>
-                Found {meet.events.length} events with results
+                {t('upload.success.message', { n: meet.events.length })}
               </p>
             </div>
             <button className="btn btn-primary" onClick={() => navigate('/')}>
-              View Dashboard
+              {t('upload.success.viewDashboard')}
             </button>
           </div>
         </div>
@@ -108,19 +110,19 @@ export default function UploadPage() {
       {meet && (
         <div className="card" style={{ marginTop: 'var(--space-6)' }}>
           <div className="card-header">
-            <h3 className="card-title">📋 Parsed Events</h3>
+            <h3 className="card-title">{t('upload.preview.title')}</h3>
           </div>
           
           <div className="table-container" style={{ maxHeight: '400px', overflow: 'auto' }}>
             <table>
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Event</th>
-                  <th>Distance</th>
-                  <th>Stroke</th>
-                  <th>Gender</th>
-                  <th>Results</th>
+                  <th>{t('eventBrowser.table.number')}</th>
+                  <th>{t('eventBrowser.table.event')}</th>
+                  <th>{t('eventBrowser.filters.distance')}</th>
+                  <th>{t('eventBrowser.filters.stroke')}</th>
+                  <th>{t('eventBrowser.table.gender')}</th>
+                  <th>{t('upload.preview.title').split(' ')[0]} {t('eventBrowser.table.entries')} (Approx)</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,7 +130,7 @@ export default function UploadPage() {
                   <tr key={event.id}>
                     <td>{event.number}</td>
                     <td>
-                      {event.isRelay ? '🏁 Relay' : '🏊 Individual'}
+                      {event.isRelay ? `${t('eventBrowser.tags.relay')}` : `${t('eventBrowser.filters.individual')}`}
                     </td>
                     <td>{event.distance}m</td>
                     <td style={{ textTransform: 'capitalize' }}>{event.stroke}</td>
@@ -148,14 +150,14 @@ export default function UploadPage() {
           <div className="card-header">
             <h3 className="card-title">
               <FileText size={18} style={{ marginRight: 'var(--space-2)' }} />
-              Raw Extracted Text
+              {t('upload.preview.raw')}
             </h3>
             <button 
               className="btn btn-secondary" 
               onClick={() => setShowRawText(!showRawText)}
               style={{ fontSize: '0.75rem', padding: 'var(--space-2) var(--space-3)' }}
             >
-              {showRawText ? 'Hide' : 'Show'}
+              {showRawText ? t('upload.preview.hide') : t('upload.preview.show')}
             </button>
           </div>
           

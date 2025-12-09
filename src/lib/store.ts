@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Meet, Event, ScoringConfig, ClubStanding, SwimmerStanding } from '../types';
+import type { Meet, ScoringConfig, ClubStanding, SwimmerStanding } from '../types';
 import { loadConfig, saveConfig, scoringPresets } from './scoringConfig';
 import { calculateScores, calculateClubStandings, calculateSwimmerStandings, convertParsedEvents } from './scoringEngine';
 import { extractTextFromPDF } from './pdfParser';
@@ -60,7 +60,7 @@ export const useAppStore = create<AppState>()(
           
           // Convert to proper model objects
           const referenceYear = new Date().getFullYear();
-          const { events, clubs, swimmers } = convertParsedEvents(parsedEvents, referenceYear);
+          const { events } = convertParsedEvents(parsedEvents, referenceYear);
           
           // Create meet object
           const meet: Meet = {

@@ -4,10 +4,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Calendar, ChevronRight, Layers } from 'lucide-react';
 import type { Event } from '../types';
 import Select from '../components/ui/Select';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function EventBrowser() {
   const { meet } = useAppStore();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [strokeFilter, setStrokeFilter] = useState<string>('');
   const [genderFilter, setGenderFilter] = useState<string>('');
   const [typeFilter, setTypeFilter] = useState<string>('');
@@ -82,18 +84,18 @@ export default function EventBrowser() {
     return (
       <div>
         <header className="page-header">
-          <h1 className="page-title">Event Browser</h1>
-          <p className="page-subtitle">Browse all events and their results</p>
+          <h1 className="page-title">{t('eventBrowser.title')}</h1>
+          <p className="page-subtitle">{t('eventBrowser.subtitle')}</p>
         </header>
         
         <div className="empty-state">
           <div className="empty-state-icon">
             <Calendar strokeWidth={1.5} />
           </div>
-          <h3>No Meet Loaded</h3>
-          <p>Upload a PDF file to browse events and view detailed results.</p>
+          <h3>{t('eventBrowser.empty.title')}</h3>
+          <p>{t('eventBrowser.empty.message')}</p>
           <Link to="/upload" className="btn btn-primary">
-            Upload PDF
+            {t('common.uploadPdf')}
           </Link>
         </div>
       </div>
@@ -103,71 +105,71 @@ export default function EventBrowser() {
   return (
     <div>
       <header className="page-header">
-        <h1 className="page-title">Event Browser</h1>
+        <h1 className="page-title">{t('eventBrowser.title')}</h1>
         <p className="page-subtitle">
-          {meet.name} • {meet.events.length} events
+          {t('eventBrowser.subtitleWithMeet', { meet: meet.name, n: meet.events.length })}
         </p>
       </header>
       
       {/* Filters */}
       <div className="filters">
         <div className="filter-group" style={{ width: '180px' }}>
-          <label>Stroke</label>
+          <label>{t('eventBrowser.filters.stroke')}</label>
           <Select 
             value={strokeFilter}
             onChange={setStrokeFilter}
             options={[
-              { value: '', label: 'All Strokes' },
-              { value: 'freestyle', label: 'Libre (Freestyle)' },
-              { value: 'backstroke', label: 'Espalda (Backstroke)' },
-              { value: 'breaststroke', label: 'Braza (Breaststroke)' },
-              { value: 'butterfly', label: 'Mariposa (Butterfly)' },
-              { value: 'medley', label: 'Estilos (Medley)' }
+              { value: '', label: t('eventBrowser.filters.allStrokes') },
+              { value: 'freestyle', label: t('eventBrowser.filters.freestyle') },
+              { value: 'backstroke', label: t('eventBrowser.filters.backstroke') },
+              { value: 'breaststroke', label: t('eventBrowser.filters.breaststroke') },
+              { value: 'butterfly', label: t('eventBrowser.filters.butterfly') },
+              { value: 'medley', label: t('eventBrowser.filters.medley') }
             ]}
           />
         </div>
 
         <div className="filter-group" style={{ width: '140px' }}>
-          <label>Distance</label>
+          <label>{t('eventBrowser.filters.distance')}</label>
           <Select 
             value={distanceFilter}
             onChange={setDistanceFilter}
             options={[
-              { value: '', label: 'All Dist' },
+              { value: '', label: t('eventBrowser.filters.allDist') },
               ...distances.map(dist => ({ value: dist.toString(), label: `${dist}m` }))
             ]}
           />
         </div>
         
         <div className="filter-group" style={{ width: '140px' }}>
-          <label>Gender</label>
+          <label>{t('eventBrowser.filters.gender')}</label>
           <Select 
             value={genderFilter}
             onChange={setGenderFilter}
             options={[
-              { value: '', label: 'All' },
-              { value: 'male', label: 'Male' },
-              { value: 'female', label: 'Female' },
-              { value: 'mixed', label: 'Mixed' }
+              { value: '', label: t('common.allGenders') },
+              { value: 'male', label: t('common.male') },
+              { value: 'female', label: t('common.female') },
+              { value: 'mixed', label: t('common.mixed') }
             ]}
           />
         </div>
         
         <div className="filter-group" style={{ width: '140px' }}>
-          <label>Type</label>
+          <label>{t('eventBrowser.filters.type')}</label>
           <Select 
             value={typeFilter}
             onChange={setTypeFilter}
             options={[
-              { value: '', label: 'All Types' },
-              { value: 'individual', label: 'Individual' },
-              { value: 'relay', label: 'Relay' }
+              { value: '', label: t('eventBrowser.filters.allTypes') },
+              { value: 'individual', label: t('eventBrowser.filters.individual') },
+              { value: 'relay', label: t('eventBrowser.filters.relay') }
             ]}
           />
         </div>
 
         <div className="filter-group" style={{ width: '200px' }}>
-          <label>Sort By</label>
+          <label>{t('eventBrowser.filters.sortBy')}</label>
           <Select 
             value={`${sortBy}-${sortDirection}`}
             onChange={(val) => {
@@ -176,12 +178,12 @@ export default function EventBrowser() {
               setSortDirection(dir as 'asc' | 'desc');
             }}
             options={[
-              { value: 'number-asc', label: 'Event # (Asc)' },
-              { value: 'number-desc', label: 'Event # (Desc)' },
-              { value: 'distance-asc', label: 'Distance (Short first)' },
-              { value: 'distance-desc', label: 'Distance (Long first)' },
-              { value: 'entries-desc', label: 'Most Entries' },
-              { value: 'entries-asc', label: 'Least Entries' }
+              { value: 'number-asc', label: t('eventBrowser.filters.numberAsc') },
+              { value: 'number-desc', label: t('eventBrowser.filters.numberDesc') },
+              { value: 'distance-asc', label: t('eventBrowser.filters.distanceAsc') },
+              { value: 'distance-desc', label: t('eventBrowser.filters.distanceDesc') },
+              { value: 'entries-desc', label: t('eventBrowser.filters.entriesDesc') },
+              { value: 'entries-asc', label: t('eventBrowser.filters.entriesAsc') }
             ]}
           />
         </div>
@@ -197,7 +199,7 @@ export default function EventBrowser() {
         gap: 'var(--space-2)'
       }}>
         <Layers size={16} />
-        Showing {filteredEvents.length} of {meet.events.length} events
+        {t('eventBrowser.showing', { n: filteredEvents.length, m: meet.events.length })}
       </div>
       
       {/* Events Grid */}
@@ -206,12 +208,12 @@ export default function EventBrowser() {
           <table>
             <thead>
               <tr>
-                <th style={{ width: '60px' }}>#</th>
-                <th style={{ width: '60px' }}>Gender</th>
-                <th>Event</th>
-                <th style={{ width: '80px' }}>Type</th>
-                <th style={{ width: '80px' }}>Category</th>
-                <th style={{ width: '80px' }}>Entries</th>
+                <th style={{ width: '60px' }}>{t('eventBrowser.table.number')}</th>
+                <th style={{ width: '60px' }}>{t('eventBrowser.table.gender')}</th>
+                <th>{t('eventBrowser.table.event')}</th>
+                <th style={{ width: '80px' }}>{t('eventBrowser.table.type')}</th>
+                <th style={{ width: '80px' }}>{t('eventBrowser.table.category')}</th>
+                <th style={{ width: '80px' }}>{t('eventBrowser.table.entries')}</th>
                 <th style={{ width: '40px' }}></th>
               </tr>
             </thead>
@@ -226,7 +228,7 @@ export default function EventBrowser() {
                     <span style={{ 
                       padding: '4px 8px', 
                       background: 'var(--color-accent-subtle)', 
-                      borderRadius: 'var(--radius-sm)', 
+                      borderRadius: 'var(--radius-sm)',
                       fontSize: '0.8rem',
                       fontWeight: '600',
                       color: 'var(--color-accent)'
@@ -266,7 +268,7 @@ export default function EventBrowser() {
                       fontSize: '0.75rem',
                       fontWeight: '500'
                     }}>
-                      {event.isRelay ? 'Relay' : 'Indiv'}
+                      {event.isRelay ? t('eventBrowser.tags.relay') : t('eventBrowser.tags.indiv')}
                     </span>
                   </td>
                   <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>

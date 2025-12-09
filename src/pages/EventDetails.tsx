@@ -1,17 +1,20 @@
 import { useParams, Link } from 'react-router-dom';
 import { useAppStore } from '../lib/store';
 import { ArrowLeft, AlertCircle, CheckCircle, XCircle } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import { secondsToTime } from '../lib/textParser';
 
 export default function EventDetails() {
   const { eventId } = useParams();
   const { meet } = useAppStore();
+  const { t } = useLanguage();
 
   if (!meet) {
     return (
       <div style={{ textAlign: 'center', padding: 'var(--space-12)' }}>
-        <h2>No meet loaded</h2>
+        <h2>{t('eventDetails.noMeet')}</h2>
         <Link to="/" className="btn btn-primary" style={{ marginTop: 'var(--space-4)', display: 'inline-flex' }}>
-          Go Home
+          {t('eventDetails.goHome')}
         </Link>
       </div>
     );
@@ -22,9 +25,9 @@ export default function EventDetails() {
   if (!event) {
     return (
       <div style={{ textAlign: 'center', padding: 'var(--space-12)' }}>
-        <h2>Event not found</h2>
+        <h2>{t('eventDetails.notFound')}</h2>
         <Link to="/events" className="btn btn-secondary" style={{ marginTop: 'var(--space-4)', display: 'inline-flex' }}>
-          Back to Events
+          {t('eventDetails.backToEvents')}
         </Link>
       </div>
     );
@@ -45,34 +48,57 @@ export default function EventDetails() {
   };
 
   const getStatus = (result: typeof event.results[0]) => {
+    // If disqualified
+    if (result.disqualified) {
+       return { text: t('eventDetails.status.dq'), color: "var(--color-destructive)", icon: <XCircle size={14} /> };
+    }
+
+    // Scoring in both
     if (result.openEligible && result.openPoints > 0) {
       if (result.categoryEligible && result.categoryPoints > 0) {
-        return { text: "Scoring (Open & Cat)", color: "var(--color-success)", icon: <CheckCircle size={14} /> };
+        return { text: t('eventDetails.status.scoringOpenCat'), color: "var(--color-success)", icon: <CheckCircle size={14} /> };
       }
-      return { text: "Scoring (Open Only)", color: "var(--color-success)", icon: <CheckCircle size={14} /> };
+      return { text: t('eventDetails.status.scoringOpen'), color: "var(--color-success)", icon: <CheckCircle size={14} /> };
     }
     
+    // Scoring only in Category
     if (result.categoryEligible && result.categoryPoints > 0) {
-      return { text: "Scoring (Category Only)", color: "var(--color-info)", icon: <CheckCircle size={14} /> };
+      // If open failed, might want to show why? But usually "Scoring Cat" implies open failed.
+      // We can check why open failed if we really want, but simpler is keep "Scoring Cat" positive.
+      return { text: t('eventDetails.status.scoringCat'), color: "var(--color-info)", icon: <CheckCircle size={14} /> };
+    }
+
+    // Not scoring... check reasons
+    // Check Open reason first if it exists and is negative
+    if (result.openStatusReason && result.openStatusReason !== 'ok') {
+       if (result.openStatusReason === 'time_limit') return { text: t('eventDetails.status.timeLimit'), color: "var(--color-warning)", icon: <AlertCircle size={14} /> };
+       if (result.openStatusReason === 'club_limit') return { text: t('eventDetails.status.clubLimit'), color: "var(--color-text-muted)", icon: <XCircle size={14} /> };
+       if (result.openStatusReason === 'dq') return { text: t('eventDetails.status.dq'), color: "var(--color-destructive)", icon: <XCircle size={14} /> };
+    }
+
+    // Check Category reason
+    if (result.categoryStatusReason && result.categoryStatusReason !== 'ok') {
+       if (result.categoryStatusReason === 'time_limit') return { text: t('eventDetails.status.timeLimit'), color: "var(--color-warning)", icon: <AlertCircle size={14} /> };
+       if (result.categoryStatusReason === 'club_limit') return { text: t('eventDetails.status.clubLimit'), color: "var(--color-text-muted)", icon: <XCircle size={14} /> };
     }
 
     if (result.swimmerCategory === 'open' && !result.openEligible) {
-      return { text: "Not Eligible (Open)", color: "var(--color-text-muted)", icon: <XCircle size={14} /> };
+      return { text: t('eventDetails.status.notEligible'), color: "var(--color-text-muted)", icon: <XCircle size={14} /> };
     }
     
     // Explicit not eligible reasons would be better if we tracked them, but for now:
     if (!result.openEligible && !result.categoryEligible) {
-      return { text: "No Points", color: "var(--color-text-muted)", icon: <XCircle size={14} /> };
+      return { text: t('eventDetails.status.noPoints'), color: "var(--color-text-muted)", icon: <XCircle size={14} /> };
     }
 
-    return { text: "See Points", color: "var(--color-text-secondary)", icon: <AlertCircle size={14} /> };
+    return { text: t('eventDetails.status.seePoints'), color: "var(--color-text-secondary)", icon: <AlertCircle size={14} /> };
   };
 
   return (
     <div>
       <header className="page-header" style={{ marginBottom: 'var(--space-6)' }}>
         <Link to="/events" className="back-button">
-          <ArrowLeft size={20} /> Back to Events
+          <ArrowLeft size={20} /> {t('eventDetails.backToEvents')}
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-4)' }}>
           <h1 className="page-title" style={{ marginBottom: 0 }}>
@@ -104,28 +130,49 @@ export default function EventDetails() {
             fontSize: '0.875rem',
             fontWeight: '600'
           }}>
-            {event.gender === 'male' ? 'Male' : event.gender === 'female' ? 'Female' : 'Mixed'}
+            {event.gender === 'male' ? t('common.male') : event.gender === 'female' ? t('common.female') : t('common.mixed')}
           </span>
         </div>
         <p className="page-subtitle" style={{ marginTop: 'var(--space-2)' }}>
-          {event.results.length} total entries • {event.category} • {event.isRelay ? 'Relay Event' : 'Individual Event'}
+          {t('eventDetails.entries', { n: event.results.length })} • {event.category} • {event.isRelay ? t('eventDetails.relayEvent') : t('eventDetails.individualEvent')}
         </p>
       </header>
+
+      {/* Qualifying Times Info */}
+      {event.qualifyingTimes && (
+          <div style={{ marginBottom: 'var(--space-6)', padding: 'var(--space-4)', background: 'var(--color-bg-elevated)', borderRadius: 'var(--radius-md)' }}>
+            <h4 style={{ fontSize: '0.9rem', marginBottom: 'var(--space-3)', color: 'var(--color-text-secondary)' }}>
+              {t('eventBrowser.qualifyingTimes.title')}
+            </h4>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-6)', fontSize: '0.9rem', fontFamily: 'monospace' }}>
+              {event.qualifyingTimes.open && (
+                <div style={{ color: 'var(--color-accent)' }}>
+                  <span style={{ fontWeight: '600' }}>{t('eventBrowser.qualifyingTimes.open')}</span> {secondsToTime(event.qualifyingTimes.open)}
+                </div>
+              )}
+              {event.qualifyingTimes.byAge && Object.entries(event.qualifyingTimes.byAge).map(([age, time]) => (
+                <div key={age} style={{ color: 'var(--color-text-secondary)' }}>
+                  <span style={{ fontWeight: '600' }}>{t('eventBrowser.qualifyingTimes.age', { age })}</span> {secondsToTime(time as number)}
+                </div>
+              ))}
+            </div>
+          </div>
+      )}
 
       <div className="card">
         <div className="table-container">
           <table>
             <thead>
               <tr>
-                <th style={{ width: '60px' }}>Pos</th>
-                <th>{event.isRelay ? 'Club / Team' : 'Swimmer'}</th>
-                {!event.isRelay && <th>Year</th>}
-                {!event.isRelay && <th>Cat</th>}
-                {!event.isRelay && <th>Club</th>}
-                <th style={{ fontFamily: 'monospace' }}>Time</th>
-                <th>Open Pts</th>
-                {!event.isRelay && <th>Cat Pts</th>}
-                <th>Status</th>
+                <th style={{ width: '60px' }}>{t('common.pos')}</th>
+                <th>{event.isRelay ? t('eventDetails.table.clubTeam') : t('common.swimmer')}</th>
+                {!event.isRelay && <th>{t('swimmerRankings.table.year')}</th>}
+                {!event.isRelay && <th>{t('swimmerRankings.table.cat')}</th>}
+                {!event.isRelay && <th>{t('common.club')}</th>}
+                <th style={{ fontFamily: 'monospace' }}>{t('eventDetails.table.time')}</th>
+                <th>{t('swimmerRankings.table.openPts')}</th>
+                {!event.isRelay && <th>{t('swimmerRankings.table.catPts')}</th>}
+                <th>{t('eventDetails.table.status')}</th>
               </tr>
             </thead>
             <tbody>
@@ -141,8 +188,8 @@ export default function EventDetails() {
                     <td>
                       <strong style={{ fontSize: '1rem' }}>
                         {event.isRelay 
-                          ? `${result.club.name} ${result.relayTeamNumber ? `(Team ${result.relayTeamNumber})` : ''}`
-                          : result.swimmer?.name || 'Unknown'
+                          ? `${result.club.name} ${result.relayTeamNumber ? `(${t('common.team')} ${result.relayTeamNumber})` : ''}`
+                          : result.swimmer?.name || t('common.unknown')
                         }
                       </strong>
                     </td>

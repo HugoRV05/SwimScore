@@ -3,9 +3,11 @@ import { useAppStore } from '../lib/store';
 import { Link } from 'react-router-dom';
 import { Search, ChevronDown, ChevronUp, Trophy } from 'lucide-react';
 import Select from '../components/ui/Select';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function ClubRankings() {
   const { meet, scoringConfig, clubStandings } = useAppStore();
+  const { t } = useLanguage();
   const [sortBy, setSortBy] = useState<'total' | 'individual' | 'relay' | 'medals'>('total');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [searchTerm, setSearchTerm] = useState('');
@@ -198,18 +200,18 @@ export default function ClubRankings() {
     return (
       <div>
         <header className="page-header">
-          <h1 className="page-title">Club Rankings</h1>
-          <p className="page-subtitle">View club standings based on competition results</p>
+          <h1 className="page-title">{t('clubRankings.title')}</h1>
+          <p className="page-subtitle">{t('clubRankings.subtitle')}</p>
         </header>
         
         <div className="empty-state">
           <div className="empty-state-icon">
             <Trophy strokeWidth={1.5} />
           </div>
-          <h3>No Meet Loaded</h3>
-          <p>Upload a PDF file to view club rankings and compare team performances.</p>
+          <h3>{t('clubRankings.empty.title')}</h3>
+          <p>{t('clubRankings.empty.message')}</p>
           <Link to="/upload" className="btn btn-primary">
-            Upload PDF
+            {t('common.uploadPdf')}
           </Link>
         </div>
       </div>
@@ -222,21 +224,21 @@ export default function ClubRankings() {
   return (
     <div>
       <header className="page-header">
-        <h1 className="page-title">Club Rankings</h1>
+        <h1 className="page-title">{t('clubRankings.title')}</h1>
         <p className="page-subtitle">
-          {meet.name} • {clubStandings.length} clubs • Scoring: {scoringConfig.name}
+          {t('clubRankings.subtitleWithMeet', { meet: meet.name, count: clubStandings.length, scoring: scoringConfig.name })}
         </p>
       </header>
       
       {/* Filters */}
       <div className="filters">
         <div className="filter-group" style={{ flex: 1, maxWidth: '250px' }}>
-          <label>Search</label>
+          <label>{t('clubRankings.filters.search')}</label>
           <div style={{ position: 'relative' }}>
             <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} />
             <input
               type="text"
-              placeholder="Search clubs..."
+              placeholder={t('clubRankings.filters.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{ paddingLeft: '36px' }}
@@ -245,28 +247,28 @@ export default function ClubRankings() {
         </div>
         
         <div className="filter-group" style={{ width: '180px' }}>
-          <label>Category</label>
+          <label>{t('clubRankings.filters.category')}</label>
           <Select 
             value={categoryFilter}
             onChange={setCategoryFilter}
             options={[
-              { value: 'all', label: 'All Categories' },
-              { value: 'open', label: 'Open' },
-              { value: 'junior', label: 'Junior' },
+              { value: 'all', label: t('common.allCategories') },
+              { value: 'open', label: t('common.open') },
+              { value: 'junior', label: t('common.junior') },
               { value: 'u14', label: 'U14' }
             ]}
           />
         </div>
 
         <div className="filter-group" style={{ width: '180px' }}>
-          <label>Gender</label>
+          <label>{t('clubRankings.filters.gender')}</label>
           <Select 
             value={genderFilter}
             onChange={setGenderFilter}
             options={[
-              { value: 'all', label: 'All Genders' },
-              { value: 'male', label: 'Male' },
-              { value: 'female', label: 'Female' }
+              { value: 'all', label: t('common.allGenders') },
+              { value: 'male', label: t('common.male') },
+              { value: 'female', label: t('common.female') }
             ]}
           />
         </div>
@@ -278,14 +280,14 @@ export default function ClubRankings() {
           <table>
             <thead>
               <tr>
-                <th>Position</th>
-                <th>Club</th>
+                <th>{t('common.pos')}</th>
+                <th>{t('common.club')}</th>
                 <th 
                   onClick={() => handleSort('individual')} 
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Individual <SortIcon column="individual" />
+                    {t('clubRankings.table.individual')} <SortIcon column="individual" />
                   </span>
                 </th>
                 <th 
@@ -293,7 +295,7 @@ export default function ClubRankings() {
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Relay <SortIcon column="relay" />
+                    {t('clubRankings.table.relay')} <SortIcon column="relay" />
                   </span>
                 </th>
                 <th 
@@ -301,7 +303,7 @@ export default function ClubRankings() {
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Total <SortIcon column="total" />
+                    {t('clubRankings.table.total')} <SortIcon column="total" />
                   </span>
                 </th>
                 <th 
@@ -309,10 +311,10 @@ export default function ClubRankings() {
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    Medals <SortIcon column="medals" />
+                    {t('clubRankings.table.medals')} <SortIcon column="medals" />
                   </span>
                 </th>
-                <th>Swimmers</th>
+                <th>{t('clubRankings.table.swimmers')}</th>
               </tr>
             </thead>
             <tbody>
@@ -356,13 +358,13 @@ export default function ClubRankings() {
         <div className="stat-card">
           <div className="stat-content">
             <h3>{sortedStandings.reduce((sum, s) => sum + s.totalPoints, 0).toFixed(0)}</h3>
-            <p>Total Points (Current View)</p>
+            <p>{t('clubRankings.stats.totalPointsView')}</p>
           </div>
         </div>
         <div className="stat-card">
           <div className="stat-content">
             <h3>{sortedStandings.reduce((sum, s) => sum + s.goldMedals, 0)}</h3>
-            <p>Gold Medals (Current View)</p>
+            <p>{t('clubRankings.stats.goldMedalsView')}</p>
           </div>
         </div>
       </div>

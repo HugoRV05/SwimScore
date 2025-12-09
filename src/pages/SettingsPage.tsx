@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { useAppStore } from '../lib/store';
-import { scoringPresets } from '../lib/scoringConfig';
-import type { ScoringConfig, CategoryConfig, CategoryScoringRule } from '../types';
-import { Save, RotateCcw, Plus, Trash2, Info } from 'lucide-react';
+import type { ScoringConfig, CategoryConfig } from '../types';
+import { Save, RotateCcw, Plus, Trash2, Info, Globe } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
+import Select from '../components/ui/Select';
 
 export default function SettingsPage() {
-  const { scoringConfig, setScoringConfig, setPreset, recalculateScores, availablePresets } = useAppStore();
+  const { scoringConfig, setScoringConfig, setPreset, availablePresets } = useAppStore();
   const [localConfig, setLocalConfig] = useState<ScoringConfig>(scoringConfig);
   const [hasChanges, setHasChanges] = useState(false);
   const [activeTab, setActiveTab] = useState<'presets' | 'points' | 'categories' | 'bonus'>('presets');
+  const { t, language, setLanguage } = useLanguage();
   
   const updateConfig = (updates: Partial<ScoringConfig>) => {
     setLocalConfig(prev => ({ ...prev, ...updates }));
@@ -67,12 +69,33 @@ export default function SettingsPage() {
     
     updateConfig({ categoryScoring: newRules });
   };
+
+  const languageOptions = [
+    { value: 'es', label: 'Español' },
+    { value: 'en', label: 'English' }
+  ];
   
   return (
     <div>
       <header className="page-header">
-        <h1 className="page-title">Scoring Settings</h1>
-        <p className="page-subtitle">Configure scoring rules and point distributions</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <div>
+            <h1 className="page-title">{t('settings.title')}</h1>
+            <p className="page-subtitle">{t('settings.subtitle')}</p>
+          </div>
+          
+          <div className="card" style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--color-bg-secondary)', minWidth: '160px' }}>
+            <Globe size={16} className="text-muted" style={{ marginLeft: 'var(--space-2)' }} />
+            <div style={{ flex: 1 }}>
+              <Select
+                value={language}
+                onChange={(val) => setLanguage(val as any)}
+                options={languageOptions}
+                className="language-select" 
+              />
+            </div>
+          </div>
+        </div>
       </header>
       
       {/* Save Bar */}
@@ -86,16 +109,16 @@ export default function SettingsPage() {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ color: 'var(--color-warning)' }}>
               <Info size={18} style={{ marginRight: 'var(--space-2)', verticalAlign: 'middle' }} />
-              You have unsaved changes
+              {t('settings.unsavedChanges')}
             </span>
             <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
               <button className="btn btn-secondary" onClick={() => setLocalConfig(scoringConfig)}>
                 <RotateCcw size={16} />
-                Discard
+                {t('settings.discard')}
               </button>
               <button className="btn btn-primary" onClick={saveChanges}>
                 <Save size={16} />
-                Save & Recalculate
+                {t('settings.save')}
               </button>
             </div>
           </div>
@@ -108,34 +131,34 @@ export default function SettingsPage() {
           className={`tab ${activeTab === 'presets' ? 'active' : ''}`}
           onClick={() => setActiveTab('presets')}
         >
-          Presets
+          {t('settings.tabs.presets')}
         </button>
         <button 
           className={`tab ${activeTab === 'points' ? 'active' : ''}`}
           onClick={() => setActiveTab('points')}
         >
-          Point Distribution
+          {t('settings.tabs.points')}
         </button>
         <button 
           className={`tab ${activeTab === 'categories' ? 'active' : ''}`}
           onClick={() => setActiveTab('categories')}
         >
-          Categories
+          {t('settings.tabs.categories')}
         </button>
         <button 
           className={`tab ${activeTab === 'bonus' ? 'active' : ''}`}
           onClick={() => setActiveTab('bonus')}
         >
-          Bonus Points
+          {t('settings.tabs.bonus')}
         </button>
       </div>
       
       {/* Presets Tab */}
       {activeTab === 'presets' && (
         <div className="card">
-          <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>Scoring Presets</h3>
+          <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>{t('settings.presets.title')}</h3>
           <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)' }}>
-            Select a preset configuration or customize your own scoring rules.
+            {t('settings.presets.description')}
           </p>
           
           <div style={{ display: 'grid', gap: 'var(--space-4)', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))' }}>
@@ -158,11 +181,11 @@ export default function SettingsPage() {
                 </p>
                 <div style={{ marginTop: 'var(--space-3)', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
                   {preset.maxSwimmersPerClubPerEvent === null 
-                    ? '⚡ No club limits' 
-                    : `👥 ${preset.maxSwimmersPerClubPerEvent} swimmers/club`
+                    ? t('settings.presets.noLimit') 
+                    : t('settings.presets.limitPerClub', { n: preset.maxSwimmersPerClubPerEvent })
                   }
                   {' • '}
-                  {preset.categories.length} categories
+                  {t('settings.presets.categoriesCount', { n: preset.categories.length })}
                 </div>
               </div>
             ))}
@@ -173,12 +196,12 @@ export default function SettingsPage() {
       {/* Points Tab */}
       {activeTab === 'points' && (
         <div className="card">
-          <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>Point Distribution</h3>
+          <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>{t('settings.points.title')}</h3>
           
           <div style={{ display: 'grid', gap: 'var(--space-6)' }}>
             {/* Individual Points */}
             <div>
-              <label>Individual Event Points (Position 1-16)</label>
+              <label>{t('settings.points.individual')}</label>
               <input
                 type="text"
                 value={localConfig.individualPoints.join(', ')}
@@ -189,13 +212,13 @@ export default function SettingsPage() {
                 placeholder="19, 16, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1"
               />
               <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: 'var(--space-1)' }}>
-                Comma-separated values for positions 1 through 16
+                {t('settings.points.commaSeparated')}
               </p>
             </div>
             
             {/* Relay Points */}
             <div>
-              <label>Relay Event Points (Position 1-16)</label>
+              <label>{t('settings.points.relay')}</label>
               <input
                 type="text"
                 value={localConfig.relayPoints.join(', ')}
@@ -209,7 +232,7 @@ export default function SettingsPage() {
             
             {/* Club Limit */}
             <div>
-              <label>Max Swimmers per Club per Event</label>
+              <label>{t('settings.points.clubLimit')}</label>
               <div style={{ display: 'flex', gap: 'var(--space-3)', alignItems: 'center' }}>
                 <input
                   type="number"
@@ -220,7 +243,7 @@ export default function SettingsPage() {
                     const val = e.target.value ? parseInt(e.target.value) : null;
                     updateConfig({ maxSwimmersPerClubPerEvent: val });
                   }}
-                  placeholder="No limit"
+                  placeholder={t('settings.points.noLimitPlaceholder')}
                   style={{ width: '120px' }}
                 />
                 <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', cursor: 'pointer' }}>
@@ -230,7 +253,7 @@ export default function SettingsPage() {
                     onChange={(e) => updateConfig({ redistributeExcessPoints: e.target.checked })}
                     style={{ width: 'auto' }}
                   />
-                  Redistribute points to next eligible
+                  {t('settings.points.redistribute')}
                 </label>
               </div>
             </div>
@@ -242,15 +265,15 @@ export default function SettingsPage() {
       {activeTab === 'categories' && (
         <div className="card">
           <div className="card-header">
-            <h3 className="card-title">Age Categories</h3>
+            <h3 className="card-title">{t('settings.categories.title')}</h3>
             <button className="btn btn-secondary" onClick={addCategory}>
               <Plus size={16} />
-              Add Category
+              {t('settings.categories.add')}
             </button>
           </div>
           
           <p style={{ color: 'var(--color-text-secondary)', marginBottom: 'var(--space-6)' }}>
-            Define age categories and which categories each can score in.
+            {t('settings.categories.description')}
           </p>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
@@ -269,7 +292,7 @@ export default function SettingsPage() {
                 >
                   <div style={{ display: 'flex', gap: 'var(--space-4)', flexWrap: 'wrap', alignItems: 'flex-start' }}>
                     <div style={{ flex: '1', minWidth: '150px' }}>
-                      <label>Name</label>
+                      <label>{t('settings.categories.name')}</label>
                       <input
                         type="text"
                         value={category.displayName}
@@ -278,27 +301,27 @@ export default function SettingsPage() {
                     </div>
                     
                     <div style={{ width: '100px' }}>
-                      <label>Min Age</label>
+                      <label>{t('settings.categories.minAge')}</label>
                       <input
                         type="number"
                         value={category.minAge || ''}
                         onChange={(e) => updateCategory(index, { minAge: e.target.value ? parseInt(e.target.value) : null })}
-                        placeholder="None"
+                        placeholder={t('settings.categories.none')}
                       />
                     </div>
                     
                     <div style={{ width: '100px' }}>
-                      <label>Max Age</label>
+                      <label>{t('settings.categories.maxAge')}</label>
                       <input
                         type="number"
                         value={category.maxAge || ''}
                         onChange={(e) => updateCategory(index, { maxAge: e.target.value ? parseInt(e.target.value) : null })}
-                        placeholder="None"
+                        placeholder={t('settings.categories.none')}
                       />
                     </div>
                     
                     <div style={{ flex: '2', minWidth: '200px' }}>
-                      <label>Can Score In</label>
+                      <label>{t('settings.categories.canScoreIn')}</label>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-2)' }}>
                         {localConfig.categories.map(targetCat => (
                           <label 
@@ -349,7 +372,7 @@ export default function SettingsPage() {
       {/* Bonus Points Tab */}
       {activeTab === 'bonus' && (
         <div className="card">
-          <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>Bonus Points for Records</h3>
+          <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>{t('settings.bonus.title')}</h3>
           
           <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', marginBottom: 'var(--space-6)', cursor: 'pointer' }}>
             <input
@@ -360,13 +383,13 @@ export default function SettingsPage() {
               })}
               style={{ width: 'auto' }}
             />
-            Enable Bonus Points for Records
+            {t('settings.bonus.enable')}
           </label>
           
           {localConfig.bonusPoints.enabled && (
             <div style={{ display: 'grid', gap: 'var(--space-4)', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
               <div>
-                <label>Regional Best Time</label>
+                <label>{t('settings.bonus.regionalBest')}</label>
                 <input
                   type="number"
                   value={localConfig.bonusPoints.regionalBest}
@@ -377,7 +400,7 @@ export default function SettingsPage() {
               </div>
               
               <div>
-                <label>Championship Record</label>
+                <label>{t('settings.bonus.championshipRecord')}</label>
                 <input
                   type="number"
                   value={localConfig.bonusPoints.championshipRecord}
@@ -388,7 +411,7 @@ export default function SettingsPage() {
               </div>
               
               <div>
-                <label>Absolute Regional Record</label>
+                <label>{t('settings.bonus.absoluteRegional')}</label>
                 <input
                   type="number"
                   value={localConfig.bonusPoints.absoluteRegional}
@@ -399,7 +422,7 @@ export default function SettingsPage() {
               </div>
               
               <div>
-                <label>National Best Time</label>
+                <label>{t('settings.bonus.nationalBest')}</label>
                 <input
                   type="number"
                   value={localConfig.bonusPoints.nationalBest}
@@ -415,7 +438,7 @@ export default function SettingsPage() {
       
       {/* Current Config Summary */}
       <div className="card" style={{ marginTop: 'var(--space-6)' }}>
-        <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>Current Configuration Summary</h3>
+        <h3 className="card-title" style={{ marginBottom: 'var(--space-4)' }}>{t('settings.summary.title')}</h3>
         <div style={{ 
           display: 'grid', 
           gap: 'var(--space-3)', 
@@ -423,22 +446,22 @@ export default function SettingsPage() {
           fontSize: '0.875rem'
         }}>
           <div>
-            <strong>Config Name:</strong>
+            <strong>{t('settings.summary.configName')}</strong>
             <p style={{ color: 'var(--color-text-secondary)' }}>{localConfig.name}</p>
           </div>
           <div>
-            <strong>Individual Points:</strong>
+            <strong>{t('settings.summary.individualPoints')}</strong>
             <p style={{ color: 'var(--color-text-secondary)' }}>{localConfig.individualPoints.slice(0, 3).join(', ')}...</p>
           </div>
           <div>
-            <strong>Club Limit:</strong>
+            <strong>{t('settings.summary.clubLimit')}</strong>
             <p style={{ color: 'var(--color-text-secondary)' }}>
-              {localConfig.maxSwimmersPerClubPerEvent === null ? 'No limit' : `${localConfig.maxSwimmersPerClubPerEvent} per event`}
+              {localConfig.maxSwimmersPerClubPerEvent === null ? t('settings.points.noLimitPlaceholder') : t('settings.summary.perEvent') + `: ${localConfig.maxSwimmersPerClubPerEvent}`}
             </p>
           </div>
           <div>
-            <strong>Categories:</strong>
-            <p style={{ color: 'var(--color-text-secondary)' }}>{localConfig.categories.length} defined</p>
+            <strong>{t('settings.summary.categories')}</strong>
+            <p style={{ color: 'var(--color-text-secondary)' }}>{t('settings.summary.defined', { n: localConfig.categories.length })}</p>
           </div>
         </div>
       </div>

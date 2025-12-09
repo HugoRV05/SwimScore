@@ -33,8 +33,10 @@ function scoreEvent(
   config: ScoringConfig,
   referenceYear: number
 ): Event {
-  // Sort results by time
-  const sortedResults = [...event.results].sort((a, b) => a.timeInSeconds - b.timeInSeconds);
+  // Sort results by time?
+  // NO: Use PDF order which we've enforced with virtual times if needed.
+  // The results array is already in PDF order.
+  const sortedResults = [...event.results];
   
   // Determine point scale
   let pointScale: number[];
@@ -98,16 +100,44 @@ function scoreEvent(
       continue;
     }
     
-    // Check Open eligibility (club limit applies per club in Open ranking)
+    // Check Open eligibility
     let openEligible = true;
-    const clubKey = `${result.club.id}-${event.gender}`;
+    let openReason: 'ok' | 'time_limit' | 'club_limit' | 'dq' = 'ok';
     
-    if (config.maxSwimmersPerClubPerEvent !== null) {
-      const openCount = openClubCounts.get(clubKey) || 0;
-      if (openCount >= config.maxSwimmersPerClubPerEvent) {
-        openEligible = false;
-      } else {
-        openClubCounts.set(clubKey, openCount + 1);
+    // 1. Check Qualifying Time (Minima)
+    if (event.qualifyingTimes?.open) {
+      if (result.timeInSeconds > event.qualifyingTimes.open) {
+        
+        // Exception: Sub20 (Age 19-20) can score in Open if they meet their Age QT
+        let exceptionGranted = false;
+        if (result.swimmer && result.swimmer.birthYear) {
+          const age = referenceYear - result.swimmer.birthYear;
+          if ((age === 19 || age === 20) && event.qualifyingTimes.byAge?.[age]) {
+            if (result.timeInSeconds <= event.qualifyingTimes.byAge[age]) {
+              exceptionGranted = true;
+            }
+          }
+        }
+
+        if (!exceptionGranted) {
+           openEligible = false;
+           openReason = 'time_limit';
+        }
+      }
+    }
+
+    // 2. Check Club Limit (applies per club in Open ranking)
+    // Only check if still eligible
+    if (openEligible) {
+      const clubKey = `${result.club.id}-${event.gender}`;
+      if (config.maxSwimmersPerClubPerEvent !== null) {
+        const openCount = openClubCounts.get(clubKey) || 0;
+        if (openCount >= config.maxSwimmersPerClubPerEvent) {
+          openEligible = false;
+          openReason = 'club_limit';
+        } else {
+          openClubCounts.set(clubKey, openCount + 1);
+        }
       }
     }
     
@@ -126,6 +156,7 @@ function scoreEvent(
       bonusPoints: 0,
       scoringEligible: openEligible,
       openEligible,
+      openStatusReason: openReason,
       categoryEligible: false, // Will be set in second pass
     });
   }
@@ -145,18 +176,42 @@ function scoreEvent(
     for (const result of categoryResults) {
       if (result.disqualified) continue;
       
-      // Check category eligibility (separate club limit per category)
-      const clubKey = `${result.club.id}-${event.gender}`;
+      // Check category eligibility
       let categoryEligible = true;
-      
-      if (config.maxSwimmersPerClubPerEvent !== null) {
-        const catCount = catClubCounts.get(clubKey) || 0;
-        if (catCount >= config.maxSwimmersPerClubPerEvent) {
+      let categoryReason: 'ok' | 'time_limit' | 'club_limit' | 'dq' = 'ok';
+
+      // 1. Check Qualifying Time (Minima) for Category
+      if (result.swimmer && result.swimmer.birthYear && event.qualifyingTimes?.byAge) {
+        const age = referenceYear - result.swimmer.birthYear;
+        const ageQT = event.qualifyingTimes.byAge[age];
+        if (ageQT && result.timeInSeconds > ageQT) {
           categoryEligible = false;
-        } else {
-          catClubCounts.set(clubKey, catCount + 1);
+          categoryReason = 'time_limit';
         }
       }
+
+      // 2. Check Club Limit (separate club limit per category)
+      if (categoryEligible) {
+        const clubKey = `${result.club.id}-${event.gender}`;
+        // Re-construct key, was declared inside loop before?
+        // Wait, clubKey is reusable?
+        // Actually it's cleaner to re-declare or just use.
+        
+        if (config.maxSwimmersPerClubPerEvent !== null) {
+          const catCount = catClubCounts.get(clubKey) || 0;
+          if (catCount >= config.maxSwimmersPerClubPerEvent) {
+            categoryEligible = false;
+            categoryReason = 'club_limit';
+          } else {
+            catClubCounts.set(clubKey, catCount + 1);
+          }
+        }
+      }
+      
+      // Update result with category status
+      result.categoryStatusReason = categoryReason;
+      
+      // Assign category points
       
       // Assign category points
       if (categoryEligible && categoryPointIndex < pointScale.length) {
@@ -448,6 +503,21 @@ export function convertParsedEvents(
         courseType: entry.courseType || 'S',
       });
     }
+
+    // Virtual Time Adjustment (Bottom-Up)
+    // Ensure numeric time order matches PDF order (handling Mixed Course sorting)
+    // If a higher-ranked swimmer (lower index) has a slower time than the one below,
+    // adjust their numeric time to be slightly faster than the one below.
+    for (let i = results.length - 2; i >= 0; i--) {
+      const current = results[i];
+      const next = results[i + 1];
+      
+      // If current is slower than next (but ranked higher/same in PDF), adjust current
+      if (current.timeInSeconds > next.timeInSeconds) {
+        // console.log(`Adjusting time for ${current.swimmer?.name || 'Swimmer'} (${current.time}) to be faster than ${next.time}`);
+        current.timeInSeconds = next.timeInSeconds - 0.01;
+      }
+    }
     
     events.push({
       id: `event-${parsed.eventNumber}`,
@@ -458,6 +528,7 @@ export function convertParsedEvents(
       category: parsed.category,
       isRelay: parsed.isRelay,
       relaySize: parsed.isRelay ? 4 : undefined,
+      qualifyingTimes: parsed.qualifyingTimes,
       results,
     });
   }
