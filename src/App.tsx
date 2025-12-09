@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
+import { HashRouter, Routes, Route, NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Upload, 
@@ -65,7 +65,8 @@ function AppContent() {
   };
 
   return (
-    <BrowserRouter>
+    {/* HashRouter keeps routing working on static hosts like GitHub Pages */}
+    <HashRouter>
       <div className="app-container">
         {/* Mobile Header */}
         <div className="mobile-header">
@@ -190,7 +191,7 @@ function AppContent() {
         
         <AnimatedMain />
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
