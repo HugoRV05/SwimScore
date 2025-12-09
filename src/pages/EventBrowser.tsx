@@ -94,7 +94,7 @@ export default function EventBrowser() {
           </div>
           <h3>{t('eventBrowser.empty.title')}</h3>
           <p>{t('eventBrowser.empty.message')}</p>
-          <Link to="/upload" className="btn btn-primary">
+          <Link to="/upload" className="btn btn-primary btn-upload">
             {t('common.uploadPdf')}
           </Link>
         </div>

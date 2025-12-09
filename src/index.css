@@ -306,7 +306,7 @@ a:hover {
   top: 0;
   left: 0;
   right: 0;
-  height: 64px;
+  height: 72px;
   background: rgba(20, 20, 20, 0.7); /* Glass morphism base */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -500,9 +500,8 @@ a:hover {
 
 .page-title {
   font-size: 2.25rem;
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: var(--space-2);
-  letter-spacing: -0.03em;
 }
 
 .page-subtitle {
@@ -663,6 +662,12 @@ a:hover {
   box-shadow: 
     0 2px 8px var(--color-accent-glow),
     inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.btn-upload,
+.btn-upload:hover,
+.btn-upload:focus-visible {
+  color: white !important; /* prevent anchor hover from changing text color */
 }
 
 .btn-primary:hover {
@@ -1054,7 +1059,6 @@ label {
 .filter-group {
   display: flex;
   flex-direction: column;
-  min-width: 180px;
 }
 
 /* ===== LOADING ===== */
@@ -1216,6 +1220,29 @@ label {
 }
 
 @media (max-width: 768px) {
+
+/* Make all text smaller on mobile */
+body {
+  font-size: 0.875rem;
+}
+
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.25rem; }
+h3 { font-size: 1.1rem; }
+h4 { font-size: 1rem; }
+
+p, span, div, a, button, label {
+  font-size: 1rem;
+}
+
+.main-content {
+  margin: var(--space-2);
+  padding: var(--space-2); /* Reduced padding */
+  padding-top: calc(72px + var(--space-2)); /* Header height + spacing */
+  overflow-x: hidden; /* Prevent page scroll */
+}
+
+
   .sidebar {
     transform: translateX(-100%);
     transition: transform var(--transition-normal);
@@ -1234,14 +1261,14 @@ label {
     display: flex; /* Show on mobile */
   }
 
-  /* Keep mobile header at original size - use px to override rem scaling */
+  /* Slightly larger header text on mobile */
   .mobile-header,
   .mobile-header * {
-    font-size: 16px !important;
+    font-size: 18px !important;
   }
 
   .mobile-brand {
-    font-size: 17.6px !important; /* 1.1rem at 16px base = 17.6px */
+    font-size: 20px !important;
   }
 
   .sidebar-overlay {
@@ -1250,80 +1277,66 @@ label {
 
   /* Keep sidebar at original size - use px to override rem scaling */
   .sidebar {
-    font-size: 16px !important;
+    font-size: 17px;
   }
 
   .sidebar-logo h1 {
-    font-size: 20px !important; /* 1.25rem at 16px base = 20px */
+    font-size: 32px;
   }
 
   .sidebar-logo span {
-    font-size: 12px !important; /* 0.75rem at 16px base = 12px */
+    font-size: 13px; /* slightly larger tagline */
   }
 
   .nav-item {
-    font-size: 14.4px !important; /* 0.9rem at 16px base = 14.4px */
+    font-size: 16px;
   }
 
   .nav-item svg {
-    width: 20px !important;
-    height: 20px !important;
+    width: 2rem;
+    height: 2rem;
   }
 
   .theme-toggle {
-    font-size: 14px !important; /* 0.875rem at 16px base = 14px */
+    font-size: 15px;
   }
 
   .theme-toggle span {
-    font-size: 14px !important;
+    font-size: 15px;
   }
 
   .theme-toggle svg {
-    width: 20px !important;
-    height: 20px !important;
+    width: 20px;
+    height: 20px;
   }
 
-  /* Global Text Size Reduction */
-  html {
-    font-size: 13px; /* Down from 16px to scale all rems */
-  }
-
-  /* Make all text smaller on mobile */
-  body {
-    font-size: 0.875rem;
-  }
-
-  h1 { font-size: 1.5rem !important; }
-  h2 { font-size: 1.25rem !important; }
-  h3 { font-size: 1.1rem !important; }
-  h4 { font-size: 1rem !important; }
-
-  p, span, div, a, button, label {
-    font-size: 0.8rem;
-  }
-
-  .main-content {
-    margin-left: 0;
-    padding: var(--space-2); /* Reduced padding */
-    padding-top: calc(64px + var(--space-2)); /* Header height + spacing */
-    overflow-x: hidden; /* Prevent page scroll */
-  }
-
+ 
   /* Stack Filters */
   .filters {
     flex-direction: column;
     gap: var(--space-1);
+    margin-bottom: var(--space-2);
+    width: 100%;
   }
 
   .filter-group {
-    width: 100% !important; /* Force full width */
-    min-width: 0 !important;
+    width: 90%; /* Force full width */
+    min-width: 90%;
+    margin-bottom: 1rem;
+  }
+  .filter-group label {
+    font-size: 0.75rem;
+  }
+  .filter-group span {
+    font-size: 0.75rem;
   }
 
   /* Responsive Tables - Strict Scrolling & Minimal Padding */
   .card {
-    padding: var(--space-3) !important;
-    overflow: visible;
+    padding: 0 var(--space-3);
+    overflow: hidden;
+    background: var(--color-bg-tertiary);
+ 
   }
 
   .card .table-container {
@@ -1340,11 +1353,9 @@ label {
     overflow-x: auto;
     overflow-y: visible;
     -webkit-overflow-scrolling: touch;
-
     border: 1px solid var(--glass-border);
 
   }
-
   table {
     width: 100%;
     min-width: max-content; /* Ensure it scrolls if content is wide */
@@ -1398,34 +1409,26 @@ label {
     grid-template-columns: 1fr;
     gap: var(--space-3);
   }
-  
-  h1 {
-    font-size: 1.25rem !important;
+  .page-header {
+    margin-bottom: var(--space-5);
+    margin-top: var(--space-2);
   }
-
   .page-title {
-    font-size: 1.25rem !important;
+    font-size: 1.5rem;
   }
   
   .page-subtitle {
-    font-size: 0.75rem !important;
+    font-size: 0.75rem;
   }
 
-  .card {
-     padding: var(--space-3);
-  }
 
   /* Additional text size reductions */
   .btn {
-    font-size: 0.75rem !important;
-  }
-
-  .filter-group label {
-    font-size: 0.7rem !important;
+    font-size: 0.75rem;
   }
 
   input, select, textarea {
-    font-size: 0.8rem !important;
+    font-size: 0.8rem;
   }
 }
 

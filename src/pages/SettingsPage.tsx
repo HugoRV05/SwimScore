@@ -84,7 +84,7 @@ export default function SettingsPage() {
             <p className="page-subtitle">{t('settings.subtitle')}</p>
           </div>
           
-          <div className="card" style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--color-bg-secondary)', minWidth: '160px' }}>
+          <div className="card, language-select" style={{ padding: '0.25rem 0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--color-bg-secondary)', minWidth: '160px' }}>
             <Globe size={16} className="text-muted" style={{ marginLeft: 'var(--space-2)' }} />
             <div style={{ flex: 1 }}>
               <Select

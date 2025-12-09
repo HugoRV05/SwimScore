@@ -9,7 +9,6 @@ import {
   Medal,
   Award,
   ChevronRight,
-  Activity,
   Timer
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
@@ -34,10 +33,6 @@ export default function Dashboard() {
     return (
       <div className="dashboard-container">
         <header className="page-header center-text">
-          <div className="brand-badge-large">
-            <Activity className="brand-icon" />
-            <span>SwimScore Pro</span>
-          </div>
           <h1 className="hero-title">{t('dashboard.welcome.title')}</h1>
           <p className="hero-subtitle">{t('dashboard.welcome.message')}</p>
         </header>
@@ -48,7 +43,7 @@ export default function Dashboard() {
           </div>
           <h3>{t('dashboard.ready.title')}</h3>
           <p>{t('dashboard.ready.message')}</p>
-          <Link to="/upload" className="btn btn-primary btn-lg">
+          <Link to="/upload" className="btn btn-primary btn-lg btn-upload">
             {t('common.uploadPdf')}
           </Link>
         </div>

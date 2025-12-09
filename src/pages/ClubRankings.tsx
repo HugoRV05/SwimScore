@@ -210,7 +210,7 @@ export default function ClubRankings() {
           </div>
           <h3>{t('clubRankings.empty.title')}</h3>
           <p>{t('clubRankings.empty.message')}</p>
-          <Link to="/upload" className="btn btn-primary">
+          <Link to="/upload" className="btn btn-primary btn-upload">
             {t('common.uploadPdf')}
           </Link>
         </div>

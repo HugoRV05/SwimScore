@@ -123,7 +123,7 @@ export default function SwimmerRankings() {
           </div>
           <h3>{t('swimmerRankings.empty.title')}</h3>
           <p>{t('swimmerRankings.empty.message')}</p>
-          <Link to="/upload" className="btn btn-primary">
+          <Link to="/upload" className="btn btn-primary btn-upload">
             {t('common.uploadPdf')}
           </Link>
         </div>

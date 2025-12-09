@@ -498,153 +498,147 @@
 @media (max-width: 768px) {
   /* Reduce hero section sizes */
   .dashboard-hero {
-    padding: var(--space-4) !important;
-    margin-bottom: var(--space-4) !important;
+    padding: var(--space-4);
+    margin-bottom: var(--space-8) ;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-3);
   }
 
   .meet-title {
-    font-size: 1.5rem !important;
+    font-size: 1.5rem ;
     line-height: 1.2;
   }
 
   .meet-meta {
-    font-size: 0.7rem !important;
+    font-size: 0.7rem;
     flex-wrap: wrap;
     gap: var(--space-2);
   }
 
   .hero-stats {
-    gap: var(--space-4) !important;
+    gap: var(--space-4);
     width: 100%;
     justify-content: space-between;
   }
 
-  .mini-stat .label {
-    font-size: 0.6rem !important;
-  }
-
-  .mini-stat .value {
-    font-size: 1.1rem !important;
-  }
-
   /* Reduce podium sizes */
   .podium-container {
-    height: 200px !important;
-    gap: var(--space-2) !important;
-    margin-bottom: var(--space-4) !important;
+    margin-top: 4rem;
+    height: 200px;
+    gap: var(--space-2);
+    margin-bottom: var(--space-3);
   }
 
   .podium-step {
-    width: 80px !important;
+    width: 80px;
   }
 
   .step-1 .podium-pillar {
-    height: 110px !important;
+    height: 110px;
   }
 
   .step-2 .podium-pillar {
-    height: 85px !important;
+    height: 85px;
   }
 
   .step-3 .podium-pillar {
-    height: 65px !important;
+    height: 65px;
   }
 
   .podium-rank {
-    font-size: 2rem !important;
+    font-size: 2rem;
   }
 
   .pillar-content .score {
-    font-size: 0.9rem !important;
+    font-size: 0.9rem;
   }
 
   .pillar-content .pts-label {
-    font-size: 0.5rem !important;
+    font-size: 0.5rem;
   }
 
   .club-name {
-    font-size: 0.7rem !important;
+    font-size: 0.7rem;
     max-width: 80px;
+    margin: 10rem var(--space-2);
   }
 
   .crown-icon {
-    width: 16px !important;
-    height: 16px !important;
+    width: 16px;
+    height: 16px;
   }
 
   /* Reduce section headers */
   .section-header {
-    margin-bottom: var(--space-3) !important;
+    margin-bottom: var(--space-3);
   }
 
   .section-header h3 {
-    font-size: 0.9rem !important;
+    font-size: 0.9rem;
   }
 
   .section-icon {
-    width: 16px !important;
-    height: 16px !important;
+    width: 16px;
+    height: 16px;
   }
 
   /* Reduce panel sizes */
   .dashboard-panel {
-    padding: var(--space-3) !important;
+    padding: var(--space-3);
   }
 
   .panel-header h3 {
-    font-size: 0.9rem !important;
+    font-size: 0.9rem;
   }
 
   .mini-list-item {
-    padding: var(--space-2) !important;
+    padding: var(--space-2);
   }
 
   .item-name {
-    font-size: 0.75rem !important;
+    font-size: 0.75rem;
   }
 
   .item-sub {
-    font-size: 0.65rem !important;
+    font-size: 0.65rem;
   }
 
   .points-badge {
-    font-size: 0.8rem !important;
+    font-size: 0.8rem;
   }
 
   .rank-dot {
-    width: 18px !important;
-    height: 18px !important;
-    font-size: 0.6rem !important;
-    margin-right: var(--space-2) !important;
+    width: 18px;
+    height: 18px;
+    font-size: 0.6rem;
+    margin-right: var(--space-2);
   }
 
   /* Reduce chart panel */
   .glass-panel {
-    padding: var(--space-3) !important;
+    padding: var(--space-3);
   }
 
   /* Reduce medal pills */
   .medal-pill {
-    font-size: 0.6rem !important;
-    padding: 2px 6px !important;
+    font-size: 0.6rem;
+    padding: 2px 6px;
   }
 
   /* Reduce dashboard grid gap */
   .dashboard-grid {
-    gap: var(--space-3) !important;
+    gap: var(--space-3);
   }
 
   /* Reduce meet badge */
   .meet-badge {
-    font-size: 0.6rem !important;
-    padding: 3px 8px !important;
+    font-size: 0.6rem;
+    padding: 3px 8px;
   }
 
   .live-dot {
-    width: 4px !important;
-    height: 4px !important;
+    width: 4px;
+    height: 4px;
   }
 }

@@ -78,10 +78,14 @@ function AppContent() {
             >
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
-            <div className="mobile-logo">
+            <NavLink 
+              to="/" 
+              className="mobile-logo"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               <Waves size={24} style={{ color: 'var(--color-accent)' }} />
               <span className="mobile-brand">SwimScore</span>
-            </div>
+            </NavLink>
           </div>
         </div>
 
