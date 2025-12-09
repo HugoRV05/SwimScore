@@ -78,12 +78,12 @@ export default function UploadPage() {
       {/* Error State */}
       {parseError && (
         <div className="card" style={{ marginTop: 'var(--space-6)', borderColor: 'var(--color-error)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', color: 'var(--color-error)' }}>
-            <AlertCircle />
-            <div>
-              <h4>{t('upload.error')}</h4>
-              <p style={{ color: 'var(--color-text-secondary)', marginTop: 'var(--space-1)' }}>{parseError}</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)', color: 'var(--color-error)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)' }}>
+              <AlertCircle size={24} style={{ flexShrink: 0 }} />
+              <h4 style={{ margin: 0 }}>{t('upload.error')}</h4>
             </div>
+            <p style={{ color: 'var(--color-text-secondary)', marginLeft: '0' }}>{parseError}</p>
           </div>
         </div>
       )}
@@ -91,15 +91,17 @@ export default function UploadPage() {
       {/* Success State */}
       {meet && !parseError && (
         <div className="card" style={{ marginTop: 'var(--space-6)', borderColor: 'var(--color-success)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', color: 'var(--color-success)' }}>
-            <CheckCircle />
-            <div style={{ flex: 1 }}>
-              <h4>{t('upload.success.title')}</h4>
-              <p style={{ color: 'var(--color-text-secondary)', marginTop: 'var(--space-1)' }}>
-                {t('upload.success.message', { n: meet.events.length })}
-              </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 'var(--space-3)', color: 'var(--color-success)' }}>
+              <CheckCircle size={24} style={{ flexShrink: 0, marginTop: '4px' }} />
+              <div>
+                <h4 style={{ margin: 0 }}>{t('upload.success.title')}</h4>
+                <p style={{ color: 'var(--color-text-secondary)', marginTop: 'var(--space-1)' }}>
+                  {t('upload.success.message', { n: meet.events.length })}
+                </p>
+              </div>
             </div>
-            <button className="btn btn-primary" onClick={() => navigate('/')}>
+            <button className="btn btn-primary" onClick={() => navigate('/')} style={{ width: '100%' }}>
               {t('upload.success.viewDashboard')}
             </button>
           </div>

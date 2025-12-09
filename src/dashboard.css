@@ -493,3 +493,158 @@
   border-color: rgba(0,0,0,0.1);
   color: #111827;
 }
+
+/* ===== MOBILE RESPONSIVE - DASHBOARD ===== */
+@media (max-width: 768px) {
+  /* Reduce hero section sizes */
+  .dashboard-hero {
+    padding: var(--space-4) !important;
+    margin-bottom: var(--space-4) !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .meet-title {
+    font-size: 1.5rem !important;
+    line-height: 1.2;
+  }
+
+  .meet-meta {
+    font-size: 0.7rem !important;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .hero-stats {
+    gap: var(--space-4) !important;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .mini-stat .label {
+    font-size: 0.6rem !important;
+  }
+
+  .mini-stat .value {
+    font-size: 1.1rem !important;
+  }
+
+  /* Reduce podium sizes */
+  .podium-container {
+    height: 200px !important;
+    gap: var(--space-2) !important;
+    margin-bottom: var(--space-4) !important;
+  }
+
+  .podium-step {
+    width: 80px !important;
+  }
+
+  .step-1 .podium-pillar {
+    height: 110px !important;
+  }
+
+  .step-2 .podium-pillar {
+    height: 85px !important;
+  }
+
+  .step-3 .podium-pillar {
+    height: 65px !important;
+  }
+
+  .podium-rank {
+    font-size: 2rem !important;
+  }
+
+  .pillar-content .score {
+    font-size: 0.9rem !important;
+  }
+
+  .pillar-content .pts-label {
+    font-size: 0.5rem !important;
+  }
+
+  .club-name {
+    font-size: 0.7rem !important;
+    max-width: 80px;
+  }
+
+  .crown-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* Reduce section headers */
+  .section-header {
+    margin-bottom: var(--space-3) !important;
+  }
+
+  .section-header h3 {
+    font-size: 0.9rem !important;
+  }
+
+  .section-icon {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  /* Reduce panel sizes */
+  .dashboard-panel {
+    padding: var(--space-3) !important;
+  }
+
+  .panel-header h3 {
+    font-size: 0.9rem !important;
+  }
+
+  .mini-list-item {
+    padding: var(--space-2) !important;
+  }
+
+  .item-name {
+    font-size: 0.75rem !important;
+  }
+
+  .item-sub {
+    font-size: 0.65rem !important;
+  }
+
+  .points-badge {
+    font-size: 0.8rem !important;
+  }
+
+  .rank-dot {
+    width: 18px !important;
+    height: 18px !important;
+    font-size: 0.6rem !important;
+    margin-right: var(--space-2) !important;
+  }
+
+  /* Reduce chart panel */
+  .glass-panel {
+    padding: var(--space-3) !important;
+  }
+
+  /* Reduce medal pills */
+  .medal-pill {
+    font-size: 0.6rem !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Reduce dashboard grid gap */
+  .dashboard-grid {
+    gap: var(--space-3) !important;
+  }
+
+  /* Reduce meet badge */
+  .meet-badge {
+    font-size: 0.6rem !important;
+    padding: 3px 8px !important;
+  }
+
+  .live-dot {
+    width: 4px !important;
+    height: 4px !important;
+  }
+}

@@ -166,12 +166,12 @@ export default function EventDetails() {
               <tr>
                 <th style={{ width: '60px' }}>{t('common.pos')}</th>
                 <th>{event.isRelay ? t('eventDetails.table.clubTeam') : t('common.swimmer')}</th>
-                {!event.isRelay && <th>{t('swimmerRankings.table.year')}</th>}
-                {!event.isRelay && <th>{t('swimmerRankings.table.cat')}</th>}
-                {!event.isRelay && <th>{t('common.club')}</th>}
+                {!event.isRelay && <th className="hide-mobile">{t('swimmerRankings.table.year')}</th>}
+                {!event.isRelay && <th className="hide-mobile">{t('swimmerRankings.table.cat')}</th>}
+                {!event.isRelay && <th className="hide-mobile">{t('common.club')}</th>}
                 <th style={{ fontFamily: 'monospace' }}>{t('eventDetails.table.time')}</th>
                 <th>{t('swimmerRankings.table.openPts')}</th>
-                {!event.isRelay && <th>{t('swimmerRankings.table.catPts')}</th>}
+                {!event.isRelay && <th className="hide-mobile">{t('swimmerRankings.table.catPts')}</th>}
                 <th>{t('eventDetails.table.status')}</th>
               </tr>
             </thead>
@@ -193,9 +193,9 @@ export default function EventDetails() {
                         }
                       </strong>
                     </td>
-                    {!event.isRelay && <td>{result.swimmer?.birthYear}</td>}
+                    {!event.isRelay && <td className="hide-mobile">{result.swimmer?.birthYear}</td>}
                     {!event.isRelay && (
-                      <td>
+                      <td className="hide-mobile">
                         <span style={{ 
                           padding: '2px 8px', 
                           borderRadius: 'var(--radius-sm)',
@@ -213,7 +213,7 @@ export default function EventDetails() {
                       </td>
                     )}
                     {!event.isRelay && (
-                      <td style={{ color: 'var(--color-text-secondary)' }}>
+                      <td className="hide-mobile" style={{ color: 'var(--color-text-secondary)' }}>
                         {result.club.name}
                       </td>
                     )}
@@ -226,7 +226,7 @@ export default function EventDetails() {
                       )}
                     </td>
                     {!event.isRelay && (
-                       <td>
+                       <td className="hide-mobile">
                         {result.categoryPoints > 0 ? (
                           <span className="points" style={{ color: 'var(--color-text-primary)' }}>{result.categoryPoints}</span>
                         ) : (

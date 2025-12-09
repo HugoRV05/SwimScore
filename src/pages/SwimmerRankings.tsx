@@ -207,6 +207,7 @@ export default function SwimmerRankings() {
                 <th>{t('swimmerRankings.table.cat')}</th>
                 <th 
                   onClick={() => handleSort('events')} 
+                  className="hide-mobile"
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -215,6 +216,7 @@ export default function SwimmerRankings() {
                 </th>
                 <th 
                   onClick={() => handleSort('avgPos')} 
+                  className="hide-mobile"
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -231,6 +233,7 @@ export default function SwimmerRankings() {
                 </th>
                 <th 
                   onClick={() => handleSort('medals')} 
+                  className="hide-mobile"
                   style={{ cursor: 'pointer', userSelect: 'none' }}
                 >
                   <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -270,14 +273,14 @@ export default function SwimmerRankings() {
                       {standing.category?.toUpperCase() || 'OPEN'}
                     </span>
                   </td>
-                  <td style={{ textAlign: 'center' }}>{standing.eventCount}</td>
-                  <td style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
+                  <td className="hide-mobile" style={{ textAlign: 'center' }}>{standing.eventCount}</td>
+                  <td className="hide-mobile" style={{ textAlign: 'center', color: 'var(--color-text-secondary)' }}>
                     {standing.averagePosition.toFixed(1)}
                   </td>
                   <td className="points" style={{ textAlign: 'center' }}>
                     {getDisplayPoints(standing).toFixed(0)}
                   </td>
-                  <td>
+                  <td className="hide-mobile">
                     <div className="medals">
                       {standing.goldMedals > 0 && (
                         <span className="medal medal-gold">G {standing.goldMedals}</span>

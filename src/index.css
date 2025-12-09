@@ -299,6 +299,82 @@ a:hover {
   min-height: 100vh;
 }
 
+/* ===== MOBILE HEADER ===== */
+.mobile-header {
+  display: none; /* Hidden on desktop */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: rgba(20, 20, 20, 0.7); /* Glass morphism base */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  z-index: 90;
+  padding: 0 var(--space-4);
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .mobile-header {
+  background: rgba(255, 255, 255, 0.8);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.mobile-header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.mobile-menu-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.mobile-menu-btn:hover {
+  background: var(--glass-bg-light);
+  color: var(--color-accent);
+}
+
+.mobile-logo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mobile-brand {
+  font-family: 'Clash Display', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, var(--color-text-primary) 0%, var(--color-accent) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ===== SIDEBAR OVERLAY ===== */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 95;
+  opacity: 0;
+  animation: fadeIn 0.3s forwards;
+}
+
 /* ===== SIDEBAR (Glassmorphism) ===== */
 .sidebar {
   width: 280px;
@@ -1127,6 +1203,7 @@ label {
 }
 
 /* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .sidebar {
     width: 240px;
@@ -1142,27 +1219,213 @@ label {
   .sidebar {
     transform: translateX(-100%);
     transition: transform var(--transition-normal);
+    z-index: 100; /* Above overlay */
+    background: var(--color-bg-primary); /* Solid back on mobile for better readability */
+    border-right: 1px solid var(--glass-border);
+    width: 280px; /* Reset width if needed */
   }
 
   .sidebar.open {
     transform: translateX(0);
+    box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+  }
+
+  .mobile-header {
+    display: flex; /* Show on mobile */
+  }
+
+  /* Keep mobile header at original size - use px to override rem scaling */
+  .mobile-header,
+  .mobile-header * {
+    font-size: 16px !important;
+  }
+
+  .mobile-brand {
+    font-size: 17.6px !important; /* 1.1rem at 16px base = 17.6px */
+  }
+
+  .sidebar-overlay {
+    display: block; /* Show when needed */
+  }
+
+  /* Keep sidebar at original size - use px to override rem scaling */
+  .sidebar {
+    font-size: 16px !important;
+  }
+
+  .sidebar-logo h1 {
+    font-size: 20px !important; /* 1.25rem at 16px base = 20px */
+  }
+
+  .sidebar-logo span {
+    font-size: 12px !important; /* 0.75rem at 16px base = 12px */
+  }
+
+  .nav-item {
+    font-size: 14.4px !important; /* 0.9rem at 16px base = 14.4px */
+  }
+
+  .nav-item svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .theme-toggle {
+    font-size: 14px !important; /* 0.875rem at 16px base = 14px */
+  }
+
+  .theme-toggle span {
+    font-size: 14px !important;
+  }
+
+  .theme-toggle svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* Global Text Size Reduction */
+  html {
+    font-size: 13px; /* Down from 16px to scale all rems */
+  }
+
+  /* Make all text smaller on mobile */
+  body {
+    font-size: 0.875rem;
+  }
+
+  h1 { font-size: 1.5rem !important; }
+  h2 { font-size: 1.25rem !important; }
+  h3 { font-size: 1.1rem !important; }
+  h4 { font-size: 1rem !important; }
+
+  p, span, div, a, button, label {
+    font-size: 0.8rem;
   }
 
   .main-content {
     margin-left: 0;
+    padding: var(--space-2); /* Reduced padding */
+    padding-top: calc(64px + var(--space-2)); /* Header height + spacing */
+    overflow-x: hidden; /* Prevent page scroll */
+  }
+
+  /* Stack Filters */
+  .filters {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .filter-group {
+    width: 100% !important; /* Force full width */
+    min-width: 0 !important;
+  }
+
+  /* Responsive Tables - Strict Scrolling & Minimal Padding */
+  .card {
+    padding: var(--space-3) !important;
+    overflow: visible;
+  }
+
+  .card .table-container {
+    margin-left: calc(var(--space-3) * -1);
+    margin-right: calc(var(--space-3) * -1);
+    width: calc(100% + var(--space-6));
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+
+    border: 1px solid var(--glass-border);
+
+  }
+
+  table {
+    width: 100%;
+    min-width: max-content; /* Ensure it scrolls if content is wide */
+  }
+
+  th, td {
+    padding: 4px 6px !important; /* Almost 0 padding as requested */
+    font-size: 0.7rem !important; /* Smaller font */
+    height: auto;
+    white-space: nowrap;
+  }
+
+  /* Optimize badge sizes */
+  .position-badge {
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+  }
+
+  .medal {
+    padding: 2px 4px;
+    font-size: 0.65rem;
+  }
+
+  /* Utility to hide columns */
+  .hide-mobile {
+    display: none;
+  }
+  
+  /* Buttons smaller */
+  .btn {
+    padding: var(--space-2) var(--space-3);
+    font-size: 0.8rem;
+  }
+
+  /* Adjust Upload Zone */
+  .upload-zone {
     padding: var(--space-4);
+  }
+  
+  .upload-zone svg {
+     width: 48px;
+     height: 48px;
+  }
+  
+  .upload-zone h3 {
+     font-size: 1.1rem;
   }
 
   .stats-grid {
     grid-template-columns: 1fr;
+    gap: var(--space-3);
   }
-
+  
   h1 {
-    font-size: 1.875rem;
+    font-size: 1.25rem !important;
   }
 
   .page-title {
-    font-size: 1.75rem;
+    font-size: 1.25rem !important;
+  }
+  
+  .page-subtitle {
+    font-size: 0.75rem !important;
+  }
+
+  .card {
+     padding: var(--space-3);
+  }
+
+  /* Additional text size reductions */
+  .btn {
+    font-size: 0.75rem !important;
+  }
+
+  .filter-group label {
+    font-size: 0.7rem !important;
+  }
+
+  input, select, textarea {
+    font-size: 0.8rem !important;
   }
 }
 

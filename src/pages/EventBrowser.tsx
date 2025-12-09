@@ -212,8 +212,8 @@ export default function EventBrowser() {
                 <th style={{ width: '60px' }}>{t('eventBrowser.table.gender')}</th>
                 <th>{t('eventBrowser.table.event')}</th>
                 <th style={{ width: '80px' }}>{t('eventBrowser.table.type')}</th>
-                <th style={{ width: '80px' }}>{t('eventBrowser.table.category')}</th>
-                <th style={{ width: '80px' }}>{t('eventBrowser.table.entries')}</th>
+                <th className="hide-mobile" style={{ width: '80px' }}>{t('eventBrowser.table.category')}</th>
+                <th className="hide-mobile" style={{ width: '80px' }}>{t('eventBrowser.table.entries')}</th>
                 <th style={{ width: '40px' }}></th>
               </tr>
             </thead>
@@ -271,10 +271,10 @@ export default function EventBrowser() {
                       {event.isRelay ? t('eventBrowser.tags.relay') : t('eventBrowser.tags.indiv')}
                     </span>
                   </td>
-                  <td style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
+                  <td className="hide-mobile" style={{ fontSize: '0.8rem', color: 'var(--color-text-secondary)' }}>
                     {event.category}
                   </td>
-                  <td style={{ fontSize: '0.875rem' }}>
+                  <td className="hide-mobile" style={{ fontSize: '0.875rem' }}>
                     {event.results.length}
                   </td>
                   <td>

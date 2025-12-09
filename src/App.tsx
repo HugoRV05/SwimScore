@@ -9,7 +9,9 @@ import {
   Settings,
   Waves,
   Sun,
-  Moon
+  Moon,
+  Menu,
+  X
 } from 'lucide-react';
 import Dashboard from './pages/Dashboard';
 import UploadPage from './pages/UploadPage';
@@ -45,6 +47,7 @@ function AnimatedMain() {
 }
 
 function AppContent() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     const saved = localStorage.getItem('theme');
     return (saved as 'dark' | 'light') || 'dark';
@@ -64,7 +67,32 @@ function AppContent() {
   return (
     <BrowserRouter>
       <div className="app-container">
-        <aside className="sidebar">
+        {/* Mobile Header */}
+        <div className="mobile-header">
+          <div className="mobile-header-left">
+            <button 
+              className="mobile-menu-btn"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+            <div className="mobile-logo">
+              <Waves size={24} style={{ color: 'var(--color-accent)' }} />
+              <span className="mobile-brand">SwimScore</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Overlay for mobile sidebar */}
+        {isMobileMenuOpen && (
+          <div 
+            className="sidebar-overlay"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        )}
+
+        <aside className={`sidebar ${isMobileMenuOpen ? 'open' : ''}`}>
           <div className="sidebar-logo">
             <Waves size={32} style={{ color: 'var(--color-accent)' }} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -85,33 +113,58 @@ function AppContent() {
             </div>
           </div>
           
+          
           <nav className="sidebar-nav">
-            <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink 
+              to="/" 
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               <LayoutDashboard />
               <span>{t('nav.dashboard')}</span>
             </NavLink>
             
-            <NavLink to="/upload" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink 
+              to="/upload" 
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               <Upload />
               <span>{t('nav.upload')}</span>
             </NavLink>
             
-            <NavLink to="/clubs" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink 
+              to="/clubs" 
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               <Trophy />
               <span>{t('nav.clubs')}</span>
             </NavLink>
             
-            <NavLink to="/swimmers" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink 
+              to="/swimmers" 
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               <Users />
               <span>{t('nav.swimmers')}</span>
             </NavLink>
             
-            <NavLink to="/events" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink 
+              to="/events" 
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               <Calendar />
               <span>{t('nav.events')}</span>
             </NavLink>
             
-            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink 
+              to="/settings" 
+              className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
               <Settings />
               <span>{t('nav.settings')}</span>
             </NavLink>
