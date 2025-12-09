@@ -64,8 +64,8 @@ function AppContent() {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
   };
 
+  // HashRouter keeps routing working on static hosts like GitHub Pages
   return (
-    {/* HashRouter keeps routing working on static hosts like GitHub Pages */}
     <HashRouter>
       <div className="app-container">
         {/* Mobile Header */}
